@@ -91,7 +91,6 @@ object BiliBiliCenter {
                 )
                 val biliBiliLive = JSON.parseObject(result.toString(), BiliBiliLive::class.java)
 
-                println(biliBiliLive.data.liveRoom.liveStatus)
                 if (liveStatus != biliBiliLive.data.liveRoom.liveStatus && biliBiliLive.data.liveRoom.liveStatus == 1) {
                     runBlocking {
                         liveStatus = biliBiliLive.data.liveRoom.liveStatus

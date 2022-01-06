@@ -2,6 +2,7 @@ package com.hcyacg.hanayamata
 
 import com.hcyacg.hanayamata.bigfun.BigFunCenter
 import com.hcyacg.hanayamata.bilibili.BiliBiliCenter
+import com.hcyacg.hanayamata.qa.Qa
 import net.mamoe.mirai.console.extension.PluginComponentStorage
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
@@ -30,10 +31,8 @@ object Pcr : KotlinPlugin(
     override fun onEnable() {
         logger.info { "$name 已加载" }
         GlobalEventChannel.subscribeAlways<GroupMessageEvent> { event ->
-            {
-                //event.message.content
-//            event.subject.sendMessage()
-
+            run {
+                Qa.load(event);
             }
         }
 

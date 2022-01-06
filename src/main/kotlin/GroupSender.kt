@@ -18,9 +18,9 @@ object GroupSender {
     suspend fun GroupSender.sendMessage(bigFunInfo: BigFunInfo) {
         Bot.instances.forEach { bot ->
             bot.groups.forEach { group ->
-                if (group.id != 960879198L) {
-                    return@forEach
-                }
+//                if (group.id != 960879198L && group.id != 834014382L) {
+//                    return@forEach
+//                }
                 run {
                     val toExternalResource =
                         ImageUtil.getImage(bigFunInfo.data[0].images[0]).toByteArray().toExternalResource()
@@ -40,9 +40,9 @@ object GroupSender {
     suspend fun GroupSender.sendMessage(biliBiliArticle: BiliBiliArticle) {
         Bot.instances.forEach { bot ->
             bot.groups.forEach { group ->
-                if (group.id != 960879198L) {
-                    return@forEach
-                }
+//                if (group.id != 960879198L && group.id != 834014382L) {
+//                    return@forEach
+//                }
                 run {
                     val toExternalResource =
                         ImageUtil.getImage(biliBiliArticle.data.articles!![0].bannerUrl).toByteArray()
@@ -63,9 +63,9 @@ object GroupSender {
     suspend fun GroupSender.sendMessage(biliBiliVideo: BiliBiliVideo) {
         Bot.instances.forEach { bot ->
             bot.groups.forEach { group ->
-                if (group.id != 960879198L) {
-                    return@forEach
-                }
+//                if (group.id != 960879198L && group.id != 834014382L) {
+//                    return@forEach
+//                }
                 run {
                     val toExternalResource =
                         ImageUtil.getImage(biliBiliVideo.data.list.vlist!![0].pic).toByteArray().toExternalResource()
@@ -85,9 +85,9 @@ object GroupSender {
     suspend fun GroupSender.sendMessage(biliBiliLive: BiliBiliLive) {
         Bot.instances.forEach { bot ->
             bot.groups.forEach { group ->
-                if (group.id != 960879198L) {
-                    return@forEach
-                }
+//                if (group.id != 960879198L && group.id != 834014382L) {
+//                    return@forEach
+//                }
 
                 run {
                     val toExternalResource =
