@@ -9,14 +9,17 @@ import net.mamoe.mirai.Bot
 import net.mamoe.mirai.message.data.*
 import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
+import java.util.*
 
 object GroupSender {
+    //    private val groupList = mutableListOf(960879198L,834014382L)
+    private val groupList = mutableListOf<Long>()
 
     suspend fun GroupSender.sendMessage(bigFunInfo: BigFunInfo) {
         Bot.instances.forEach { bot ->
             bot.groups.forEach { group ->
-                if (group.id != 960879198L && group.id != 834014382L) {
-                    return@forEach
+                if (groupList.size != 0 && groupList.indexOf(group.id) == -1) {
+                    return
                 }
                 run {
                     val toExternalResource =
@@ -24,7 +27,9 @@ object GroupSender {
                     val imageId: String = toExternalResource.uploadAsImage(group).imageId
                     toExternalResource.close()
                     group.sendMessage(
-                        Image(imageId).plus("\n")
+                        PlainText("${bigFunInfo.data[0].user.nickname} 发表了新文章").plus("\n")
+                            .plus("======").plus("\n")
+                            .plus(Image(imageId)).plus("\n")
                             .plus(bigFunInfo.data[0].title).plus("\n")
                             .plus(bigFunInfo.data[0].content).plus("\n")
                             .plus("https://www.bigfun.cn/post/${bigFunInfo.data[0].id}")
@@ -37,8 +42,8 @@ object GroupSender {
     suspend fun GroupSender.sendMessage(biliBiliArticle: BiliBiliArticle) {
         Bot.instances.forEach { bot ->
             bot.groups.forEach { group ->
-                if (group.id != 960879198L && group.id != 834014382L) {
-                    return@forEach
+                if (groupList.size != 0 && groupList.indexOf(group.id) == -1) {
+                    return
                 }
                 run {
                     val toExternalResource =
@@ -47,7 +52,9 @@ object GroupSender {
                     val imageId: String = toExternalResource.uploadAsImage(group).imageId
                     toExternalResource.close()
                     group.sendMessage(
-                        Image(imageId).plus("\n")
+                        PlainText("${biliBiliArticle.data.articles[0].author.name} 发表了新专栏文章").plus("\n")
+                            .plus("======").plus("\n")
+                            .plus(Image(imageId)).plus("\n")
                             .plus(biliBiliArticle.data.articles[0].title).plus("\n")
                             .plus(biliBiliArticle.data.articles[0].summary).plus("\n")
                             .plus("https://www.bilibili.com/read/cv${biliBiliArticle.data.articles[0].id}")
@@ -60,8 +67,8 @@ object GroupSender {
     suspend fun GroupSender.sendMessage(biliBiliVideo: BiliBiliVideo) {
         Bot.instances.forEach { bot ->
             bot.groups.forEach { group ->
-                if (group.id != 960879198L && group.id != 834014382L) {
-                    return@forEach
+                if (groupList.size != 0 && groupList.indexOf(group.id) == -1) {
+                    return
                 }
                 run {
                     val toExternalResource =
@@ -69,7 +76,9 @@ object GroupSender {
                     val imageId: String = toExternalResource.uploadAsImage(group).imageId
                     toExternalResource.close()
                     group.sendMessage(
-                        Image(imageId).plus("\n")
+                        PlainText("${biliBiliVideo.data.list.vlist[0].author} 发表了新视频").plus("\n")
+                            .plus("======").plus("\n")
+                            .plus(Image(imageId)).plus("\n")
                             .plus(biliBiliVideo.data.list.vlist[0].title).plus("\n")
                             .plus(biliBiliVideo.data.list.vlist[0].description).plus("\n")
                             .plus("https://www.bilibili.com/video/${biliBiliVideo.data.list.vlist[0].bvid}")
@@ -82,8 +91,8 @@ object GroupSender {
     suspend fun GroupSender.sendMessage(biliBiliLive: BiliBiliLive) {
         Bot.instances.forEach { bot ->
             bot.groups.forEach { group ->
-                if (group.id != 960879198L && group.id != 834014382L) {
-                    return@forEach
+                if (groupList.size != 0 && groupList.indexOf(group.id) == -1) {
+                    return
                 }
 
                 run {
@@ -110,8 +119,8 @@ object GroupSender {
     suspend fun GroupSender.sendMessage(biliBiliDynamic: BiliBiliDynamic) {
         Bot.instances.forEach { bot ->
             bot.groups.forEach { group ->
-                if (group.id != 960879198L && group.id != 834014382L) {
-                    return@forEach
+                if (groupList.size != 0 && groupList.indexOf(group.id) == -1) {
+                    return
                 }
 
                 run {
@@ -135,6 +144,7 @@ object GroupSender {
                     imageList.forEach {
                         message = message.plus(Image(it)).plus("\n")
                     }
+                    message = message.plus("https://t.bilibili.com/${biliBiliDynamic.data.cards[0].desc.dynamicIdStr}")
                     group.sendMessage(message)
                 }
             }
