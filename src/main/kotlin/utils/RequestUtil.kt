@@ -13,7 +13,6 @@ object RequestUtil {
 
     private val client = OkHttpClient().newBuilder().connectTimeout(60000, TimeUnit.MILLISECONDS)
         .readTimeout(60000, TimeUnit.MILLISECONDS)
-    private lateinit var response: Response
 
     fun requestObject(
         method: Method,
@@ -76,27 +75,34 @@ object RequestUtil {
      * 发送http请求，返回数据（其中根据proxy是否配置加入代理机制）
      */
     private fun httpObject(request: Request, logger: MiraiLogger): JSONObject? {
+        val response: Response = client.build().newCall(request).execute()
 
-
-        response = client.build().newCall(request).execute()
-
-        if (response.isSuccessful) {
-            return JSONObject.parseObject(response.body?.string())
+        try {
+            if (response.isSuccessful) {
+                return JSONObject.parseObject(response.body?.string())
+            }
+            return null
+        } catch (e: Exception) {
+            logger.error(e)
+            return null
+        } finally {
+            response.close()
         }
-
-        response.close()
-        return null
     }
 
     private fun httpArray(request: Request, logger: MiraiLogger): JSONArray? {
-
-        response = client.build().newCall(request).execute()
-
-        if (response.isSuccessful) {
-            return JSONArray.parseArray(response.body?.string())
+        val response: Response = client.build().newCall(request).execute()
+        try {
+            if (response.isSuccessful) {
+                return JSONArray.parseArray(response.body?.string())
+            }
+            return null
+        } catch (e: Exception) {
+            logger.error(e)
+            return null
+        } finally {
+            response.close()
         }
-        response.close()
-        return null
     }
 
 }

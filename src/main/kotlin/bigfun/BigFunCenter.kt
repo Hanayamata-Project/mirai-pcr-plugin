@@ -23,17 +23,23 @@ object BigFunCenter {
     fun load() {
         Timer().schedule(object : TimerTask() {
             override fun run() {
-                val result = RequestUtil.requestObject(Method.GET, Config.bigFun, requestBody, headers.build(), logger)
-                val bigFunInfo = JSON.parseObject(result.toString(), BigFunInfo::class.java)
+                try {
+                    val result =
+                        RequestUtil.requestObject(Method.GET, Config.bigFun, requestBody, headers.build(), logger)
+                    val bigFunInfo = JSON.parseObject(result.toString(), BigFunInfo::class.java)
 
-                if (!::oldId.isInitialized) {
-                    oldId = bigFunInfo.data[0].id
-                    return
-                } else if (!oldId.contentEquals(bigFunInfo.data[0].id)) {
-                    runBlocking {
-                        GroupSender.sendMessage(bigFunInfo)
-                        delay(10000L)
+                    if (!::oldId.isInitialized) {
+                        oldId = bigFunInfo.data[0].id
+                        return
+                    } else if (!oldId.contentEquals(bigFunInfo.data[0].id)) {
+                        runBlocking {
+                            oldId = bigFunInfo.data[0].id
+                            GroupSender.sendMessage(bigFunInfo)
+                            delay(10000L)
+                        }
                     }
+                } catch (e: Exception) {
+                    logger.error(e.message)
                 }
             }
         }, Date(), 10000)

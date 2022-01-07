@@ -1,15 +1,12 @@
 package com.hcyacg.hanayamata
 
-import com.hcyacg.hanayamata.entity.BigFunInfo
-import com.hcyacg.hanayamata.entity.BiliBiliArticle
-import com.hcyacg.hanayamata.entity.BiliBiliLive
-import com.hcyacg.hanayamata.entity.BiliBiliVideo
+import com.alibaba.fastjson.JSON
+import com.alibaba.fastjson.JSONObject
+import com.hcyacg.hanayamata.config.Config
+import com.hcyacg.hanayamata.entity.*
 import com.hcyacg.hanayamata.utils.ImageUtil
 import net.mamoe.mirai.Bot
-import net.mamoe.mirai.message.data.Image
-import net.mamoe.mirai.message.data.Message
-import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.message.data.QuoteReply
+import net.mamoe.mirai.message.data.*
 import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 
@@ -18,9 +15,9 @@ object GroupSender {
     suspend fun GroupSender.sendMessage(bigFunInfo: BigFunInfo) {
         Bot.instances.forEach { bot ->
             bot.groups.forEach { group ->
-//                if (group.id != 960879198L && group.id != 834014382L) {
-//                    return@forEach
-//                }
+                if (group.id != 960879198L && group.id != 834014382L) {
+                    return@forEach
+                }
                 run {
                     val toExternalResource =
                         ImageUtil.getImage(bigFunInfo.data[0].images[0]).toByteArray().toExternalResource()
@@ -40,9 +37,9 @@ object GroupSender {
     suspend fun GroupSender.sendMessage(biliBiliArticle: BiliBiliArticle) {
         Bot.instances.forEach { bot ->
             bot.groups.forEach { group ->
-//                if (group.id != 960879198L && group.id != 834014382L) {
-//                    return@forEach
-//                }
+                if (group.id != 960879198L && group.id != 834014382L) {
+                    return@forEach
+                }
                 run {
                     val toExternalResource =
                         ImageUtil.getImage(biliBiliArticle.data.articles!![0].bannerUrl).toByteArray()
@@ -63,9 +60,9 @@ object GroupSender {
     suspend fun GroupSender.sendMessage(biliBiliVideo: BiliBiliVideo) {
         Bot.instances.forEach { bot ->
             bot.groups.forEach { group ->
-//                if (group.id != 960879198L && group.id != 834014382L) {
-//                    return@forEach
-//                }
+                if (group.id != 960879198L && group.id != 834014382L) {
+                    return@forEach
+                }
                 run {
                     val toExternalResource =
                         ImageUtil.getImage(biliBiliVideo.data.list.vlist!![0].pic).toByteArray().toExternalResource()
@@ -85,9 +82,9 @@ object GroupSender {
     suspend fun GroupSender.sendMessage(biliBiliLive: BiliBiliLive) {
         Bot.instances.forEach { bot ->
             bot.groups.forEach { group ->
-//                if (group.id != 960879198L && group.id != 834014382L) {
-//                    return@forEach
-//                }
+                if (group.id != 960879198L && group.id != 834014382L) {
+                    return@forEach
+                }
 
                 run {
                     val toExternalResource =
@@ -102,6 +99,41 @@ object GroupSender {
                             .plus(Image(imageId)).plus("\n")
                             .plus(biliBiliLive.data.liveRoom.title).plus("\n")
                             .plus(biliBiliLive.data.liveRoom.url)
+                    }
+                    group.sendMessage(message)
+                }
+            }
+        }
+    }
+
+
+    suspend fun GroupSender.sendMessage(biliBiliDynamic: BiliBiliDynamic) {
+        Bot.instances.forEach { bot ->
+            bot.groups.forEach { group ->
+                if (group.id != 960879198L && group.id != 834014382L) {
+                    return@forEach
+                }
+
+                run {
+                    val biliBiliDynamicItem = JSON.parseObject(
+                        JSONObject.parseObject(biliBiliDynamic.data.cards[0].card).toString(),
+                        BiliBiliDynamicItem::class.java
+                    )
+                    val imageList = mutableListOf<String>()
+                    biliBiliDynamicItem.item?.pictures?.forEach {
+                        val toExternalResource =
+                            ImageUtil.getImage(it.imgSrc).toByteArray().toExternalResource()
+                        val imageId: String = toExternalResource.uploadAsImage(group).imageId
+                        imageList.add(imageId)
+                        toExternalResource.close()
+                    }
+
+                    var message: MessageChain = PlainText("${biliBiliDynamicItem.user?.name}B站动态更新了".plus("\n"))
+                        .plus("======").plus("\n")
+                        .plus(biliBiliDynamicItem.item!!.description).plus("\n")
+
+                    imageList.forEach {
+                        message = message.plus(Image(it)).plus("\n")
                     }
                     group.sendMessage(message)
                 }
