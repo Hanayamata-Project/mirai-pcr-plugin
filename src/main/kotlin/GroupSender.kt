@@ -12,28 +12,40 @@ import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import java.util.*
 
 object GroupSender {
-    //    private val groupList = mutableListOf(960879198L,834014382L)
-    private val groupList = mutableListOf<Long>()
+    private val groupList = mutableListOf(960879198L, 834014382L)
+//    private val groupList = mutableListOf<Long>()
 
     suspend fun GroupSender.sendMessage(bigFunInfo: BigFunInfo) {
         Bot.instances.forEach { bot ->
-            bot.groups.forEach { group ->
-                if (groupList.size != 0 && groupList.indexOf(group.id) == -1) {
-                    return
+            bot.groups.forEach here@{ group ->
+                if (groupList.isNotEmpty() && groupList.indexOf(group.id) == -1) {
+                    return@here
                 }
                 run {
-                    val toExternalResource =
-                        ImageUtil.getImage(bigFunInfo.data[0].images[0]).toByteArray().toExternalResource()
-                    val imageId: String = toExternalResource.uploadAsImage(group).imageId
-                    toExternalResource.close()
-                    group.sendMessage(
-                        PlainText("${bigFunInfo.data[0].user.nickname} 发表了新文章").plus("\n")
-                            .plus("======").plus("\n")
-                            .plus(Image(imageId)).plus("\n")
-                            .plus(bigFunInfo.data[0].title).plus("\n")
-                            .plus(bigFunInfo.data[0].content).plus("\n")
-                            .plus("https://www.bigfun.cn/post/${bigFunInfo.data[0].id}")
-                    );
+                    if (bigFunInfo.data[0].images.isEmpty()) {
+                        group.sendMessage(
+                            PlainText("${bigFunInfo.data[0].user.nickname} 发表了新文章").plus("\n")
+                                .plus("======").plus("\n")
+                                .plus(bigFunInfo.data[0].title).plus("\n")
+                                .plus(bigFunInfo.data[0].content).plus("\n")
+                                .plus("https://www.bigfun.cn/post/${bigFunInfo.data[0].id}")
+                        );
+                    } else {
+                        val toExternalResource =
+                            ImageUtil.getImage(bigFunInfo.data[0].images[0]).toByteArray().toExternalResource()
+                        val imageId: String = toExternalResource.uploadAsImage(group).imageId
+                        toExternalResource.close()
+                        group.sendMessage(
+                            PlainText("${bigFunInfo.data[0].user.nickname} 发表了新文章").plus("\n")
+                                .plus("======").plus("\n")
+                                .plus(Image(imageId)).plus("\n")
+                                .plus(bigFunInfo.data[0].title).plus("\n")
+                                .plus(bigFunInfo.data[0].content).plus("\n")
+                                .plus("https://www.bigfun.cn/post/${bigFunInfo.data[0].id}")
+                        );
+                    }
+
+
                 }
             }
         }
@@ -41,9 +53,9 @@ object GroupSender {
 
     suspend fun GroupSender.sendMessage(biliBiliArticle: BiliBiliArticle) {
         Bot.instances.forEach { bot ->
-            bot.groups.forEach { group ->
+            bot.groups.forEach here@{ group ->
                 if (groupList.size != 0 && groupList.indexOf(group.id) == -1) {
-                    return
+                    return@here
                 }
                 run {
                     val toExternalResource =
@@ -66,9 +78,9 @@ object GroupSender {
 
     suspend fun GroupSender.sendMessage(biliBiliVideo: BiliBiliVideo) {
         Bot.instances.forEach { bot ->
-            bot.groups.forEach { group ->
+            bot.groups.forEach here@{ group ->
                 if (groupList.size != 0 && groupList.indexOf(group.id) == -1) {
-                    return
+                    return@here
                 }
                 run {
                     val toExternalResource =
@@ -90,9 +102,9 @@ object GroupSender {
 
     suspend fun GroupSender.sendMessage(biliBiliLive: BiliBiliLive) {
         Bot.instances.forEach { bot ->
-            bot.groups.forEach { group ->
+            bot.groups.forEach here@{ group ->
                 if (groupList.size != 0 && groupList.indexOf(group.id) == -1) {
-                    return
+                    return@here
                 }
 
                 run {
@@ -118,9 +130,9 @@ object GroupSender {
 
     suspend fun GroupSender.sendMessage(biliBiliDynamic: BiliBiliDynamic) {
         Bot.instances.forEach { bot ->
-            bot.groups.forEach { group ->
+            bot.groups.forEach here@{ group ->
                 if (groupList.size != 0 && groupList.indexOf(group.id) == -1) {
-                    return
+                    return@here
                 }
 
                 run {

@@ -17,6 +17,7 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.FormBody
 import okhttp3.Headers
 import okhttp3.RequestBody
+import org.apache.commons.lang3.StringUtils
 import java.lang.Exception
 import java.util.*
 
@@ -24,10 +25,10 @@ import java.util.*
 object BiliBiliCenter {
     private val headers = Headers.Builder()
     private var requestBody: RequestBody? = null
-    private lateinit var videoId: String
+    private var videoId: String = ""
     private var articleId: Int = 0
     private var liveStatus: Int = -1
-    private lateinit var dynamicId: String
+    private var dynamicId: String = ""
 
     fun load() {
         article()
@@ -81,7 +82,7 @@ object BiliBiliCenter {
                         return
                     }
 
-                    if (!::videoId.isInitialized) {
+                    if (StringUtils.isBlank(videoId)) {
                         videoId = biliBiliVideo.data.list.vlist[0].bvid
                         return
                     } else if (videoId != biliBiliVideo.data.list.vlist[0].bvid) {
@@ -147,7 +148,7 @@ object BiliBiliCenter {
                     )
                     val biliBiliDynamic = JSON.parseObject(result.toString(), BiliBiliDynamic::class.java)
 
-                    if (!::dynamicId.isInitialized) {
+                    if (StringUtils.isBlank(dynamicId)) {
                         dynamicId = biliBiliDynamic.data.cards[0].desc.dynamicIdStr
                         return
                     } else if (!dynamicId.contentEquals(biliBiliDynamic.data.cards[0].desc.dynamicIdStr)) {

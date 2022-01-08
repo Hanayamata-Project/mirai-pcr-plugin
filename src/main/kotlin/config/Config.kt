@@ -3,6 +3,7 @@ package com.hcyacg.hanayamata.config
 import net.mamoe.mirai.utils.MiraiLogger
 
 object Config {
+    //22532
     val bigFun = "https://www.bigfun.cn/api/client/web?method=getUserPostList&user_id=22532&page=1"
     val bilibiliId = 549739
 

@@ -12,13 +12,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import okhttp3.Headers
 import okhttp3.RequestBody
+import org.apache.commons.lang3.StringUtils
 import java.util.*
 
 
 object BigFunCenter {
     private val headers = Headers.Builder()
     private val requestBody: RequestBody? = null
-    private lateinit var oldId: String
+    private var oldId: String = "0"
 
     fun load() {
         Timer().schedule(object : TimerTask() {
@@ -28,10 +29,15 @@ object BigFunCenter {
                         RequestUtil.requestObject(Method.GET, Config.bigFun, requestBody, headers.build(), logger)
                     val bigFunInfo = JSON.parseObject(result.toString(), BigFunInfo::class.java)
 
-                    if (!::oldId.isInitialized) {
+                    if (oldId.contentEquals("0")) {
+                        if (bigFunInfo.data.isEmpty()) {
+                            oldId = "1"
+                            return
+                        }
+
                         oldId = bigFunInfo.data[0].id
                         return
-                    } else if (!oldId.contentEquals(bigFunInfo.data[0].id)) {
+                    } else if (bigFunInfo.data.isNotEmpty() && !oldId.contentEquals(bigFunInfo.data[0].id)) {
                         runBlocking {
                             oldId = bigFunInfo.data[0].id
                             GroupSender.sendMessage(bigFunInfo)
@@ -39,6 +45,7 @@ object BigFunCenter {
                         }
                     }
                 } catch (e: Exception) {
+                    e.printStackTrace()
                     logger.error(e.message)
                 }
             }

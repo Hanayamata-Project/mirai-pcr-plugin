@@ -2,6 +2,7 @@ package com.hcyacg.hanayamata
 
 import com.hcyacg.hanayamata.bigfun.BigFunCenter
 import com.hcyacg.hanayamata.bilibili.BiliBiliCenter
+import com.hcyacg.hanayamata.feedback.FeedbackCenter
 import com.hcyacg.hanayamata.qa.Qa
 import net.mamoe.mirai.console.extension.PluginComponentStorage
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
@@ -10,6 +11,7 @@ import net.mamoe.mirai.console.plugin.name
 import net.mamoe.mirai.event.GlobalEventChannel
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.utils.info
+import org.apache.commons.lang3.StringUtils
 
 
 object Pcr : KotlinPlugin(
@@ -32,7 +34,13 @@ object Pcr : KotlinPlugin(
         logger.info { "$name 已加载" }
         GlobalEventChannel.subscribeAlways<GroupMessageEvent> { event ->
             run {
-                Qa.load(event);
+                if (StringUtils.isNotBlank(event.message.contentToString())) {
+                    Qa.load(event);
+
+                    if (event.message.contentToString().contains("反馈 ")) {
+                        FeedbackCenter.load(event)
+                    }
+                }
             }
         }
 
