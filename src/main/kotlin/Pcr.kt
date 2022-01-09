@@ -12,6 +12,8 @@ import net.mamoe.mirai.event.GlobalEventChannel
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.utils.info
 import org.apache.commons.lang3.StringUtils
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 object Pcr : KotlinPlugin(
@@ -37,8 +39,15 @@ object Pcr : KotlinPlugin(
                 if (StringUtils.isNotBlank(event.message.contentToString())) {
                     Qa.load(event);
 
-                    if (event.message.contentToString().contains("反馈 ")) {
-                        FeedbackCenter.load(event)
+                    val send: Pattern = Pattern.compile("(?i)^(反馈)[ ].+\$")
+                    val sendRegex: Matcher = send.matcher(event.message.contentToString())
+                    if (sendRegex.find()) {
+                        FeedbackCenter.send(event)
+                    }
+                    val get: Pattern = Pattern.compile("(?i)^(获取反馈)[ ][0-9]+\$")
+                    val getRegex: Matcher = get.matcher(event.message.contentToString())
+                    if (getRegex.find()) {
+                        FeedbackCenter.get(event)
                     }
                 }
             }

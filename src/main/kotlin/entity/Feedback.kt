@@ -15,4 +15,6 @@ data class Feedback(
     val botId: Long,
     @JSONField(name = "createTime")
     val createTime: String,
+    @JSONField(name = "status")
+    val status: Int
 )
