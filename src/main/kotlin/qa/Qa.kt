@@ -35,12 +35,14 @@ object Qa {
         val array = JSONArray.parseArray(result.getString("data"))
         for (data in array) {
             val qa = JSON.parseObject(data.toString(), Qa::class.java)
-            val regex = Regex(qa.expression).containsMatchIn(message)
-            if (regex) {
+
+            val send: Pattern = Pattern.compile(qa.expression)
+            val sendRegex: Matcher = send.matcher(message)
+            if (sendRegex.find()) {
                 val regexHtml = "(?!<(img).*?>)<.*?>"
                 val p_html: Pattern = Pattern.compile(regexHtml, Pattern.CASE_INSENSITIVE)
                 val m_html: Matcher = p_html.matcher(qa.html)
-                val quoteReply: QuoteReply = QuoteReply(event.message)
+                val quoteReply = QuoteReply(event.message)
                 var message: MessageChain = quoteReply.plus("")
                 val split = m_html.replaceAll("").split("\n")
                 for ((index, it) in split.withIndex()) {
