@@ -1,5 +1,6 @@
 package com.hcyacg.hanayamata.utils
 
+import com.luciad.imageio.webp.WebPReadParam
 import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -10,10 +11,14 @@ import java.awt.Image
 import java.awt.Rectangle
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.net.URI
 import java.util.concurrent.TimeUnit
 import javax.imageio.ImageIO
+import javax.imageio.ImageReader
+import javax.imageio.stream.FileImageInputStream
 import javax.net.ssl.*
 
 
@@ -35,15 +40,13 @@ class ImageUtil {
          * 将图片链接读取到内存转换成ByteArrayOutputStream，方便操作
          */
         fun getImage(imageUri: String): ByteArrayOutputStream {
-
+            val infoStream = ByteArrayOutputStream()
             try {
-//                val request = if (isChange){
-//                    Request.Builder().url(imageUri.replace("i.pximg.net","i.pixiv.cat")).headers(headers.build()).get().build()
-//                }else{
-//                    Request.Builder().url(imageUri).get().build()
-//                }
+                if (imageUri.contains(".webp")) {
+                    return getWebp(imageUri)
+                }
+
                 val request = Request.Builder().url(imageUri).get().build()
-                val infoStream = ByteArrayOutputStream()
                 val response: Response = client.build().newCall(request).execute();
 
                 val `in` = response.body?.byteStream()
@@ -56,11 +59,29 @@ class ImageUtil {
                 }
                 infoStream.write((Math.random() * 100).toInt() + 1)
                 infoStream.close()
-                isChange = false
                 return infoStream
             } catch (e: Exception) {
-                isChange = true
-                return getImage(imageUri)
+                e.printStackTrace()
+                return infoStream
+            }
+        }
+
+        fun getWebp(imageUri: String): ByteArrayOutputStream {
+            val infoStream = ByteArrayOutputStream()
+            try {
+                val reader: ImageReader = ImageIO.getImageReadersByMIMEType("image/webp").next()
+                val readParam = WebPReadParam()
+                readParam.isBypassFiltering = true
+                reader.input = FileImageInputStream(FileUtil.urlToFile(imageUri))
+                val image: BufferedImage = reader.read(0, readParam)
+                ImageIO.write(image, "png", infoStream)
+
+                infoStream.write((Math.random() * 100).toInt() + 1)
+                infoStream.close()
+                return infoStream
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return infoStream
             }
         }
 

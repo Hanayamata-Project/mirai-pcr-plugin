@@ -12,8 +12,8 @@ import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import java.util.*
 
 object GroupSender {
-//    private val groupList = mutableListOf(960879198L, 834014382L)
-private val groupList = mutableListOf(960879198L)
+    private val groupList = mutableListOf(960879198L, 834014382L)
+//private val groupList = mutableListOf(960879198L)
 //    private val groupList = mutableListOf<Long>()
 
     suspend fun GroupSender.sendMessage(bigFunInfo: BigFunInfo) {
@@ -164,14 +164,14 @@ private val groupList = mutableListOf(960879198L)
                             .plus("${if (null != biliBiliDynamicItem.item?.description) biliBiliDynamicItem.item?.description else biliBiliDynamicItem.item?.content}")
                             .plus("\n")
 
-                        if (null != biliBiliDynamic.data.cards[0].display.richText) {
+                        if (biliBiliDynamic.data.cards.isNotEmpty() && null != biliBiliDynamic.data.cards[0].display.richText && biliBiliDynamic.data.cards[0].display.richText!!.richDetails.isNotEmpty()) {
                             message = message.plus(biliBiliDynamic.data.cards[0].display.richText!!.richDetails[0].text)
                                 .plus("\n")
                                 .plus(biliBiliDynamic.data.cards[0].display.richText!!.richDetails[0].jumpUri)
                                 .plus("\n")
                         }
 
-                        if (null != biliBiliDynamic.data.cards[0].display.topicInfo?.newTopic) {
+                        if (biliBiliDynamic.data.cards.isNotEmpty() && null != biliBiliDynamic.data.cards[0].display.topicInfo?.newTopic) {
                             message = message.plus(biliBiliDynamic.data.cards[0].display.topicInfo!!.newTopic!!.name)
                                 .plus("\n")
                                 .plus(biliBiliDynamic.data.cards[0].display.topicInfo!!.newTopic!!.link).plus("\n")
