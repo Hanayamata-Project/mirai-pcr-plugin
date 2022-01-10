@@ -5,91 +5,109 @@ import com.alibaba.fastjson.annotation.JSONField
 
 data class BiliBiliDynamicItem(
     @JSONField(name = "item")
-    val item: Item? = Item(),
+    var item: Item?,
     @JSONField(name = "user")
-    val user: BDIUser? = BDIUser()
+    val user: BDIUser?
 )
 
 data class Item(
     @JSONField(name = "at_control")
-    val atControl: String = "",
+    val atControl: String?,
     @JSONField(name = "category")
-    val category: String = "",
+    val category: String?,
     @JSONField(name = "description")
-    val description: String = "",
+    val description: String?,
     @JSONField(name = "id")
-    val id: Int = 0,
+    val id: Int?,
     @JSONField(name = "is_fav")
-    val isFav: Int = 0,
+    val isFav: Int?,
     @JSONField(name = "pictures")
-    val pictures: List<Picture> = listOf(),
+    val pictures: List<Picture>?,
     @JSONField(name = "pictures_count")
-    val picturesCount: Int = 0,
+    val picturesCount: Int?,
     @JSONField(name = "reply")
-    val reply: Int = 0,
+    val reply: Int?,
     @JSONField(name = "role")
-    val role: List<Any> = listOf(),
+    val role: List<Any>?,
     @JSONField(name = "settings")
-    val settings: Settings? = Settings(),
+    val settings: Settings?,
     @JSONField(name = "source")
-    val source: List<Any> = listOf(),
+    val source: List<Any>?,
     @JSONField(name = "title")
-    val title: String = "",
+    val title: String?,
     @JSONField(name = "upload_time")
-    val uploadTime: Int = 0
+    val uploadTime: Int?,
+    @JSONField(name = "content")
+    val content: String?,
+    @JSONField(name = "ctrl")
+    val ctrl: String?,
+    @JSONField(name = "orig_dy_id")
+    val origDyId: Int?,
+    @JSONField(name = "pre_dy_id")
+    val preDyId: Int?,
+    @JSONField(name = "rp_id")
+    val rpId: Long?,
+    @JSONField(name = "timestamp")
+    val timestamp: Int?,
+    @JSONField(name = "uid")
+    val uid: Int?
 )
 
 data class BDIUser(
+    @JSONField(name = "face")
+    val face: String?,
     @JSONField(name = "head_url")
-    val headUrl: String = "",
+    val headUrl: String?,
     @JSONField(name = "name")
-    val name: String = "",
+    val name: String?,
     @JSONField(name = "uid")
-    val uid: Int = 0,
+    val uid: Int?,
     @JSONField(name = "vip")
-    val vip: BDIVip? = BDIVip()
+    val vip: BDIVip?,
+    @JSONField(name = "uname")
+    val uname: String?
 )
 
 data class Picture(
     @JSONField(name = "img_height")
-    val imgHeight: Int = 0,
+    val imgHeight: Int?,
     @JSONField(name = "img_size")
-    val imgSize: Double = 0.0,
+    val imgSize: Double?,
     @JSONField(name = "img_src")
-    val imgSrc: String = "",
+    val imgSrc: String?,
     @JSONField(name = "img_width")
-    val imgWidth: Int = 0
+    val imgWidth: Int?
 )
 
 data class Settings(
     @JSONField(name = "copy_forbidden")
-    val copyForbidden: String = ""
+    val copyForbidden: String?
 )
 
 data class BDIVip(
     @JSONField(name = "avatar_subscript")
-    val avatarSubscript: Int = 0,
+    val avatarSubscript: Int?,
     @JSONField(name = "due_date")
-    val dueDate: Long = 0,
+    val dueDate: Long?,
     @JSONField(name = "label")
-    val label: BDILabel? = BDILabel(),
+    val label: BDILabel?,
     @JSONField(name = "nickname_color")
-    val nicknameColor: String = "",
+    val nicknameColor: String?,
     @JSONField(name = "status")
-    val status: Int = 0,
+    val status: Int?,
     @JSONField(name = "theme_type")
-    val themeType: Int = 0,
+    val themeType: Int?,
     @JSONField(name = "type")
-    val type: Int = 0,
+    val type: Int?,
     @JSONField(name = "vip_pay_type")
-    val vipPayType: Int = 0
+    val vipPayType: Int?
 )
 
 data class BDILabel(
     @JSONField(name = "label_theme")
-    val labelTheme: String = "",
+    val labelTheme: String?,
     @JSONField(name = "path")
-    val path: String = "",
+    val path: String?,
     @JSONField(name = "text")
-    val text: String = ""
+    val text: String?
 )

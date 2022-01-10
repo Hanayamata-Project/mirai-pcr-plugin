@@ -47,7 +47,7 @@ data class Article(
     @JSONField(name = "cover_avid")
     val coverAvid: Int,
     @JSONField(name = "ctime")
-    val ctime: Int,
+    val ctime: Long,
     @JSONField(name = "dispute")
     val dispute: Any?,
     @JSONField(name = "id")

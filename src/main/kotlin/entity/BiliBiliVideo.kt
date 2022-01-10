@@ -58,7 +58,7 @@ data class Vlist(
     @JSONField(name = "copyright")
     val copyright: String,
     @JSONField(name = "created")
-    val created: Int,
+    val created: Long,
     @JSONField(name = "description")
     val description: String,
     @JSONField(name = "hide_click")

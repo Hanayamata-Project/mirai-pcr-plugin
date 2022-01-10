@@ -12,7 +12,8 @@ import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import java.util.*
 
 object GroupSender {
-    private val groupList = mutableListOf(960879198L, 834014382L)
+//    private val groupList = mutableListOf(960879198L, 834014382L)
+private val groupList = mutableListOf(960879198L)
 //    private val groupList = mutableListOf<Long>()
 
     suspend fun GroupSender.sendMessage(bigFunInfo: BigFunInfo) {
@@ -136,28 +137,58 @@ object GroupSender {
                 }
 
                 run {
-                    val biliBiliDynamicItem = JSON.parseObject(
-                        JSONObject.parseObject(biliBiliDynamic.data.cards[0].card).toString(),
-                        BiliBiliDynamicItem::class.java
-                    )
-                    val imageList = mutableListOf<String>()
-                    biliBiliDynamicItem.item?.pictures?.forEach {
-                        val toExternalResource =
-                            ImageUtil.getImage(it.imgSrc).toByteArray().toExternalResource()
-                        val imageId: String = toExternalResource.uploadAsImage(group).imageId
-                        imageList.add(imageId)
-                        toExternalResource.close()
+                    try {
+
+                        println(biliBiliDynamic.data.cards[0].card)
+                        val biliBiliDynamicItem = JSON.parseObject(
+                            JSONObject.parseObject(biliBiliDynamic.data.cards[0].card).toString(),
+                            BiliBiliDynamicItem::class.java
+                        )
+
+                        println(biliBiliDynamicItem)
+                        val imageList = mutableListOf<String>()
+                        biliBiliDynamicItem.item?.pictures?.forEach {
+                            val toExternalResource =
+                                it.imgSrc?.let { it1 -> ImageUtil.getImage(it1).toByteArray().toExternalResource() }
+                            val imageId: String? = toExternalResource?.uploadAsImage(group)?.imageId
+                            imageId?.let { it1 -> imageList.add(it1) }
+                            toExternalResource?.close()
+                        }
+
+                        var message: MessageChain = PlainText(
+                            "${if (null != biliBiliDynamicItem.user?.name) biliBiliDynamicItem.user.name else biliBiliDynamicItem.user?.uname}B站动态更新了".plus(
+                                "\n"
+                            )
+                        )
+                            .plus("======").plus("\n")
+                            .plus("${if (null != biliBiliDynamicItem.item?.description) biliBiliDynamicItem.item?.description else biliBiliDynamicItem.item?.content}")
+                            .plus("\n")
+
+                        if (null != biliBiliDynamic.data.cards[0].display.richText) {
+                            message = message.plus(biliBiliDynamic.data.cards[0].display.richText!!.richDetails[0].text)
+                                .plus("\n")
+                                .plus(biliBiliDynamic.data.cards[0].display.richText!!.richDetails[0].jumpUri)
+                                .plus("\n")
+                        }
+
+                        if (null != biliBiliDynamic.data.cards[0].display.topicInfo?.newTopic) {
+                            message = message.plus(biliBiliDynamic.data.cards[0].display.topicInfo!!.newTopic!!.name)
+                                .plus("\n")
+                                .plus(biliBiliDynamic.data.cards[0].display.topicInfo!!.newTopic!!.link).plus("\n")
+                        }
+
+
+                        imageList.forEach {
+                            message = message.plus(Image(it)).plus("\n")
+                        }
+                        message =
+                            message.plus("https://t.bilibili.com/${biliBiliDynamic.data.cards[0].desc.dynamicIdStr}")
+                        group.sendMessage(message)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        group.sendMessage(e.localizedMessage)
                     }
 
-                    var message: MessageChain = PlainText("${biliBiliDynamicItem.user?.name}B站动态更新了".plus("\n"))
-                        .plus("======").plus("\n")
-                        .plus(biliBiliDynamicItem.item!!.description).plus("\n")
-
-                    imageList.forEach {
-                        message = message.plus(Image(it)).plus("\n")
-                    }
-                    message = message.plus("https://t.bilibili.com/${biliBiliDynamic.data.cards[0].desc.dynamicIdStr}")
-                    group.sendMessage(message)
                 }
             }
         }

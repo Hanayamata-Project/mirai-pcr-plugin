@@ -25,10 +25,14 @@ import java.util.*
 object BiliBiliCenter {
     private val headers = Headers.Builder()
     private var requestBody: RequestBody? = null
-    private var videoId: String = ""
+    private var videoId: String = "0"
+    private var videoTimeStamp: Long = 0L
+
     private var articleId: Int = 0
+    private var articleTimeStamp: Long = 0L
     private var liveStatus: Int = -1
-    private var dynamicId: String = ""
+    private var dynamicId: String = "0"
+    private var dynamicTimeStamp: Long = 0L
 
     fun load() {
         article()
@@ -48,15 +52,22 @@ object BiliBiliCenter {
                     )
                     val biliBiliArticle = JSON.parseObject(result.toString(), BiliBiliArticle::class.java)
                     if (null == biliBiliArticle.data.articles) {
+                        articleId = -1
                         return
                     }
                     if (articleId == 0) {
                         articleId = biliBiliArticle.data.articles[0].id
                         return
-                    } else if (articleId != biliBiliArticle.data.articles[0].id) {
+                    } else if (biliBiliArticle.data.articles.isNotEmpty() && articleId != biliBiliArticle.data.articles[0].id) {
                         runBlocking {
                             articleId = biliBiliArticle.data.articles[0].id
-                            GroupSender.sendMessage(biliBiliArticle)
+                            if (articleTimeStamp != 0L && articleTimeStamp < biliBiliArticle.data.articles[0].ctime) {
+                                GroupSender.sendMessage(biliBiliArticle)
+                                articleTimeStamp = biliBiliArticle.data.articles[0].ctime
+                            } else if (articleTimeStamp == 0L) {
+                                GroupSender.sendMessage(biliBiliArticle)
+                                articleTimeStamp = biliBiliArticle.data.articles[0].ctime
+                            }
                             delay(10000L)
                         }
                     }
@@ -78,17 +89,25 @@ object BiliBiliCenter {
                     )
                     val biliBiliVideo = JSON.parseObject(result.toString(), BiliBiliVideo::class.java)
 
-                    if (null == biliBiliVideo.data.list.vlist) {
-                        return
-                    }
 
-                    if (StringUtils.isBlank(videoId)) {
+                    if (videoId.contentEquals("0")) {
+
+                        if (null == biliBiliVideo.data.list.vlist || biliBiliVideo.data.list.vlist.isEmpty()) {
+                            videoId = "1"
+                            return
+                        }
                         videoId = biliBiliVideo.data.list.vlist[0].bvid
                         return
-                    } else if (videoId != biliBiliVideo.data.list.vlist[0].bvid) {
+                    } else if (null != biliBiliVideo.data.list.vlist && biliBiliVideo.data.list.vlist.isNotEmpty() && videoId != biliBiliVideo.data.list.vlist[0].bvid) {
                         runBlocking {
                             videoId = biliBiliVideo.data.list.vlist[0].bvid
-                            GroupSender.sendMessage(biliBiliVideo)
+                            if (videoTimeStamp != 0L && videoTimeStamp < biliBiliVideo.data.list.vlist[0].created) {
+                                GroupSender.sendMessage(biliBiliVideo)
+                                videoTimeStamp = biliBiliVideo.data.list.vlist[0].created
+                            } else if (videoTimeStamp == 0L) {
+                                GroupSender.sendMessage(biliBiliVideo)
+                                videoTimeStamp = biliBiliVideo.data.list.vlist[0].created
+                            }
                             delay(10000L)
                         }
                     }
@@ -148,13 +167,25 @@ object BiliBiliCenter {
                     )
                     val biliBiliDynamic = JSON.parseObject(result.toString(), BiliBiliDynamic::class.java)
 
-                    if (StringUtils.isBlank(dynamicId)) {
+                    if (dynamicId.contentEquals("0")) {
+                        if (biliBiliDynamic.data.cards.isEmpty()) {
+                            dynamicId = "1"
+                            return
+                        }
+
                         dynamicId = biliBiliDynamic.data.cards[0].desc.dynamicIdStr
                         return
-                    } else if (!dynamicId.contentEquals(biliBiliDynamic.data.cards[0].desc.dynamicIdStr)) {
+                    } else if (biliBiliDynamic.data.cards.isNotEmpty() && !dynamicId.contentEquals(biliBiliDynamic.data.cards[0].desc.dynamicIdStr)) {
                         runBlocking {
                             dynamicId = biliBiliDynamic.data.cards[0].desc.dynamicIdStr
-                            GroupSender.sendMessage(biliBiliDynamic)
+
+                            if (dynamicTimeStamp != 0L && dynamicTimeStamp < biliBiliDynamic.data.cards[0].desc.timestamp) {
+                                GroupSender.sendMessage(biliBiliDynamic)
+                                dynamicTimeStamp = biliBiliDynamic.data.cards[0].desc.timestamp
+                            } else if (dynamicTimeStamp == 0L) {
+                                GroupSender.sendMessage(biliBiliDynamic)
+                                dynamicTimeStamp = biliBiliDynamic.data.cards[0].desc.timestamp
+                            }
                             delay(10000L)
                         }
                     }

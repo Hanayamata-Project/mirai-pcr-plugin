@@ -52,21 +52,20 @@ object Qa {
                         val imageId: String = toExternalResource.uploadAsImage(event.group).imageId
                         toExternalResource.close()
 
-                        if (index + 1 >= split.size) {
-                            message = message.plus(Image(imageId))
+                        message = if (index + 1 >= split.size) {
+                            message.plus(Image(imageId))
                         } else {
-                            message = message.plus(Image(imageId)).plus("\n")
+                            message.plus(Image(imageId)).plus("\n")
                         }
                     } else {
-                        if (index + 1 >= split.size) {
-                            message = message.plus(it)
+                        message = if (index + 1 >= split.size) {
+                            message.plus(it)
                         } else {
-                            message = message.plus(it).plus("\n")
+                            message.plus(it).plus("\n")
                         }
                     }
                 }
                 event.subject.sendMessage(message)
-
             }
         }
     }

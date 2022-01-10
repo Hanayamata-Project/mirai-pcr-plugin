@@ -80,7 +80,7 @@ data class Desc(
     @JSONField(name = "stype")
     val stype: Int = 0,
     @JSONField(name = "timestamp")
-    val timestamp: Int = 0,
+    val timestamp: Long = 0,
     @JSONField(name = "type")
     val type: Int = 0,
     @JSONField(name = "uid")
@@ -104,10 +104,30 @@ data class Display(
     val relation: RelationX? = RelationX(),
     @JSONField(name = "show_tip")
     val showTip: ShowTipX? = ShowTipX(),
+    @JSONField(name = "rich_text")
+    val richText: RichText? = RichText(),
     @JSONField(name = "topic_info")
     val topicInfo: TopicInfoX? = TopicInfoX(),
     @JSONField(name = "usr_action_txt")
     val usrActionTxt: String = ""
+)
+
+data class RichText(
+    @JSONField(name = "rich_details")
+    val richDetails: List<RichDetail> = listOf()
+)
+
+data class RichDetail(
+
+    @JSONField(name = "icon_type")
+    val iconType: Int = 0,
+    @JSONField(name = "jump_uri")
+    val jumpUri: String = "",
+    @JSONField(name = "orig_text")
+    val origText: String = "",
+    @JSONField(name = "text")
+    val text: String = ""
+
 )
 
 data class Extra(
