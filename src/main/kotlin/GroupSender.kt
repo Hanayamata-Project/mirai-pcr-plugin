@@ -130,6 +130,10 @@ object GroupSender {
 
 
     suspend fun GroupSender.sendMessage(biliBiliDynamic: BiliBiliDynamic) {
+        if (biliBiliDynamic.data.cards[0].desc.type == 64) {
+            return
+        }
+
         Bot.instances.forEach { bot ->
             bot.groups.forEach here@{ group ->
                 if (groupList.size != 0 && groupList.indexOf(group.id) == -1) {
@@ -139,13 +143,11 @@ object GroupSender {
                 run {
                     try {
 
-                        println(biliBiliDynamic.data.cards[0].card)
                         val biliBiliDynamicItem = JSON.parseObject(
                             JSONObject.parseObject(biliBiliDynamic.data.cards[0].card).toString(),
                             BiliBiliDynamicItem::class.java
                         )
 
-                        println(biliBiliDynamicItem)
                         val imageList = mutableListOf<String>()
                         biliBiliDynamicItem.item?.pictures?.forEach {
                             val toExternalResource =
